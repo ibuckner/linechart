@@ -37,7 +37,6 @@ export declare class Linechart {
     ticksX: number;
     ticksY: number;
     w: number;
-    private _area;
     private _axisX;
     private _axisY;
     private _canvas;
@@ -52,7 +51,6 @@ export declare class Linechart {
     private _scaleY;
     private _selected;
     private _svg;
-    private _xvalues;
     constructor(options: TLinechartOptions);
     /**
      * Clears selection from chart

@@ -4269,7 +4269,6 @@ var Linechart = /** @class */ (function () {
         this._extentY = [0, 0];
         this._id = "";
         this._isDate = function (d) { return !isNaN(Date.parse(d)); };
-        this._xvalues = new Set();
         if (options.margin !== undefined) {
             var m = options.margin;
             m.left = isNaN(m.left) ? 0 : m.left;
@@ -4325,7 +4324,6 @@ var Linechart = /** @class */ (function () {
     Linechart.prototype.data = function (data) {
         var _this = this;
         this._data = data;
-        this._xvalues.clear();
         this._data.series.forEach(function (item) {
             if (item.color === undefined) {
                 item.color = _this._color(item.label);
@@ -4334,7 +4332,6 @@ var Linechart = /** @class */ (function () {
                 if (_this._isDate(item[0])) {
                     item[0] = new Date(item[0]);
                 }
-                _this._xvalues.add(item[0]);
             });
         });
         this._line = line()
@@ -4430,51 +4427,44 @@ var Linechart = /** @class */ (function () {
             .attr("font-size", 10)
             .attr("text-anchor", "middle")
             .attr("y", -8);
+        var path = self._canvas.selectAll("path.linechart");
+        var series = self._canvas.selectAll("g.series");
         if ("ontouchstart" in document) {
-            this._canvas
-                .style("-webkit-tap-highlight-color", "transparent")
+            series
                 .on("touchmove", moved)
                 .on("touchstart", entered)
                 .on("touchend", left);
         }
         else {
-            this._canvas
+            series
                 .on("mousemove", moved)
                 .on("mouseenter", entered)
                 .on("mouseleave", left);
         }
         function entered() {
-            self._canvas.selectAll("g.series")
-                .style("mix-blend-mode", null)
-                .attr("stroke", "#ddd");
             dot.attr("display", null);
         }
         function left() {
-            self._canvas.selectAll("g.series")
-                .style("mix-blend-mode", "multiply")
-                .attr("stroke", null);
             dot.attr("display", "none");
         }
         function moved() {
-            var path = self._canvas.selectAll("g.series");
             event.preventDefault();
             var ms = mouse(this);
             var xm = self._scaleX.invert(ms[0]);
             var ym = self._scaleY.invert(ms[1]);
-            var xvalues = Array.from(self._xvalues.values());
+            var xvalues = path.datum().values.map(function (d) { return d[0]; });
             var i1 = bisectLeft(xvalues, xm, 1);
             var i0 = i1 - 1;
             var i = xm - xvalues[i0] > xvalues[i1] - xm ? i1 : i0;
-            var s = least(self._data.series, function (d) { return Math.abs(d.values[i][0] - ym); });
-            path.attr("stroke", function (d) { return d === s ? null : "#ddd"; }).filter(function (d) { return d === s; }).raise();
-            dot.attr("transform", "translate(" + self._scaleX(xvalues[i]) + "," + this._scaleY(s.values[i]) + ")");
+            var s = least(self._data.series, function (d) { return Math.abs(d.values[i][1] - ym); });
+            var dt = self._isDate(xvalues[i]) ? new Date(xvalues[i]) : xvalues[i];
+            dot.attr("transform", "translate(" + self._scaleX(dt) + "," + self._scaleY(s.values[i][1]) + ")");
             dot.select("text").text(s.label);
         }
         return this;
     };
     Linechart.prototype._drawSeries = function () {
         var _this = this;
-        var series;
         var g = this._canvas.select("g.series");
         if (g.empty()) {
             g = this._canvas.append("g").attr("class", "series");
@@ -4482,18 +4472,17 @@ var Linechart = /** @class */ (function () {
         g.selectAll("path.linechart")
             .data(this._data.series)
             .join(function (enter) {
-            series = enter.append("path")
+            var series = enter.append("path")
                 .attr("id", function (d, i) { return _this._id + "_p" + i; })
                 .attr("class", "linechart")
                 .attr("d", function (d) { return _this._line(d.values); })
-                .style("mix-blend-mode", "multiply")
-                .style("stroke", function (d) { return d.color; })
+                .attr("stroke", function (d) { return d.color; })
                 .on("click", function () { return _this._lineClickHandler(event.target); });
             series.append("title").text(function (d) { return "" + d.label; });
         }, function (update) {
             update.attr("id", function (d, i) { return _this._id + "_p" + i; })
                 .attr("d", _this._line)
-                .style("stroke", function (d) { return d.color; });
+                .attr("stroke", function (d) { return d.color; });
             update.select("title").text(function (d) { return "" + d.label; });
         }, function (exit) { return exit.remove(); });
         return this;

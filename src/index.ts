@@ -47,7 +47,6 @@ export class Linechart {
   public ticksY: number = 10;
   public w: number = 200;
 
-  private _area: any;
   private _axisX: any;
   private _axisY: any;
   private _canvas: any;
@@ -62,7 +61,6 @@ export class Linechart {
   private _scaleY: any;
   private _selected: SVGElement | undefined;
   private _svg: any;
-  private _xvalues: Set<any> = new Set();
 
   constructor(options: TLinechartOptions) {
     if (options.margin !== undefined) {
@@ -127,7 +125,6 @@ export class Linechart {
    */
   public data(data: TLine): Linechart {
     this._data = data;
-    this._xvalues.clear();
 
     this._data.series.forEach((item: TLineSeries) => {
       if (item.color === undefined) {
@@ -137,7 +134,6 @@ export class Linechart {
         if (this._isDate(item[0])) {
           item[0] = new Date(item[0]);
         }
-        this._xvalues.add(item[0]);
       });
     });
 
@@ -238,7 +234,6 @@ export class Linechart {
         .on("click", () => this.clearSelection());
       this._canvas = this._svg.select(".canvas");
     }
-
     return this;
   }
 
@@ -255,46 +250,41 @@ export class Linechart {
       .attr("text-anchor", "middle")
       .attr("y", -8);
 
+    const path = self._canvas.selectAll("path.linechart");
+    const series = self._canvas.selectAll("g.series");
+
     if ("ontouchstart" in document) {
-      this._canvas
-        .style("-webkit-tap-highlight-color", "transparent")
+      series
         .on("touchmove", moved)
         .on("touchstart", entered)
         .on("touchend", left);
     } else {
-      this._canvas
+      series
         .on("mousemove", moved)
         .on("mouseenter", entered)
         .on("mouseleave", left);
     }
 
     function entered() {
-      self._canvas.selectAll("g.series")
-        .style("mix-blend-mode", null)
-        .attr("stroke", "#ddd");
       dot.attr("display", null);
     }
 
     function left() {
-      self._canvas.selectAll("g.series")
-        .style("mix-blend-mode", "multiply")
-        .attr("stroke", null);
       dot.attr("display", "none");
     }
 
     function moved(this: any) {
-      const path = self._canvas.selectAll("g.series");
       event.preventDefault();
       const ms = mouse(this);
       const xm = self._scaleX.invert(ms[0]);
       const ym = self._scaleY.invert(ms[1]);
-      const xvalues = Array.from(self._xvalues.values());
+      const xvalues = path.datum().values.map((d: any) => d[0]);
       const i1 = bisectLeft(xvalues, xm, 1);
       const i0 = i1 - 1;
       const i = xm - xvalues[i0] > xvalues[i1] - xm ? i1 : i0;
-      const s = least(self._data.series, (d: any) => Math.abs(d.values[i][0] - ym));
-      path.attr("stroke", (d: any) => d === s ? null : "#ddd").filter((d: any) => d === s).raise();
-      dot.attr("transform", `translate(${self._scaleX(xvalues[i])},${this._scaleY(s.values[i])})`);
+      const s = least(self._data.series, (d: any) => Math.abs(d.values[i][1] - ym));
+      const dt = self._isDate(xvalues[i]) ? new Date(xvalues[i]) : xvalues[i] ;
+      dot.attr("transform", `translate(${self._scaleX(dt)},${self._scaleY(s.values[i][1])})`);
       dot.select("text").text(s.label);
     }
 
@@ -302,9 +292,6 @@ export class Linechart {
   }
 
   private _drawSeries(): Linechart {
-    let n: number = 0;
-    let series: any;
-
     let g = this._canvas.select("g.series");
     if (g.empty()) {
       g = this._canvas.append("g").attr("class", "series");
@@ -314,19 +301,18 @@ export class Linechart {
       .data(this._data.series)
       .join(
         (enter: any) => {
-          series = enter.append("path")
+          const series = enter.append("path")
             .attr("id", (d: any, i: number) => `${this._id}_p${i}`)
             .attr("class", "linechart")
             .attr("d", (d: any) => this._line(d.values))
-            .style("mix-blend-mode", "multiply")
-            .style("stroke", (d: any) => d.color)
+            .attr("stroke", (d: any) => d.color)
             .on("click", () => this._lineClickHandler(event.target));
           series.append("title").text((d: any) => `${d.label}`);
         },
         (update: any) => {
           update.attr("id", (d: any, i: number) => `${this._id}_p${i}`)
             .attr("d", this._line as any)
-            .style("stroke", (d: any) => d.color);
+            .attr("stroke", (d: any) => d.color);
           update.select("title").text((d: any) => `${d.label}`);
         },
         (exit: any) => exit.remove()
