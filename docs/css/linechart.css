@@ -1,0 +1,30 @@
+path.linechart {
+  cursor: pointer;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: 0.8;
+  stroke-width: 1.5;
+  transition: all 500ms ease-in-out;
+}
+
+path.linechart.fade {
+  stroke-opacity: 0.2;
+}
+
+path.linechart.selected {
+  stroke: #000;
+  stroke-opacity: 0.85;
+}
+
+.tick line {
+  stroke: #b8b8b8;
+}
+
+.line-axis-x-text {
+  font-size: 0.8em;
+}
+
+.line-axis-y-text {
+  font-size: 0.8em;
+}

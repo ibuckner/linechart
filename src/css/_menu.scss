@@ -1,0 +1,40 @@
+@use "globals";
+
+.menu {
+  @include globals.fx($dir: column);
+  @include globals.transition;
+
+  background-color: #333;
+  color: #ebfc04;
+  line-height: 26px;
+  min-width: 220px;
+  padding: 15px;
+  position: fixed;
+  right: 0;
+  top: 50px;
+  width: 40%;
+  z-index: 600000;
+}
+
+.menu.ready {
+  @include globals.disabled;
+
+  transform: translateX(100%);
+}
+
+.menu-button {
+  background-color: transparent;
+  color: #ebfc04;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 10px;
+  user-select: none;
+}
+
+.panel-row {
+  @include globals.fx;
+
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.3em;
+}

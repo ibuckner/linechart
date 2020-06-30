@@ -1,0 +1,95 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  transition: all 500ms ease-in-out;
+  background-color: #333;
+  color: #ebfc04;
+  line-height: 26px;
+  min-width: 220px;
+  padding: 15px;
+  position: fixed;
+  right: 0;
+  top: 50px;
+  width: 40%;
+  z-index: 600000;
+}
+
+.menu.ready {
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
+  transform: translateX(100%);
+}
+
+.menu-button {
+  background-color: transparent;
+  color: #ebfc04;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 10px;
+  user-select: none;
+}
+
+.panel-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.3em;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: "Trebuchet MS", "Open Sans", "Segoe UI light", "Verdana", "Tahoma", "Helvetica", sans-serif;
+  overflow: hidden;
+}
+
+h2 {
+  cursor: pointer;
+  margin: 5px 0;
+  text-align: right;
+}
+
+code {
+  background-color: #444;
+  max-height: 400px;
+  padding: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  white-space: pre-line;
+}
+
+.hidden {
+  opacity: 0 !important;
+  display: none !important;
+}
+
+#chart {
+  background-color: #fff;
+  height: calc(100% - 50px);
+  left: 0;
+  position: fixed;
+  top: 50px;
+  width: 100%;
+}
+
+#title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: #333;
+  height: 50px;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}

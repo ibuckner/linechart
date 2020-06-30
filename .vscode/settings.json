@@ -1,0 +1,15 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": false,
+    "**/docs": false,
+    "**/docs/index.html": false,
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": false,
+  },
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
