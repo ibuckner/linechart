@@ -1,6 +1,6 @@
 import { bisectLeft, extent, least } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
-import { event, mouse, select, selectAll } from "d3-selection";
+import { pointer, select, selectAll } from "d3-selection";
 import { scaleLinear, scaleOrdinal, scaleTime } from "d3-scale";
 import { schemePaired } from "d3-scale-chromatic";
 import { line } from "d3-shape";
@@ -255,12 +255,12 @@ export class Linechart {
 
     if ("ontouchstart" in document) {
       series
-        .on("touchmove", moved)
+        .on("touchmove", (event: any) => moved(event))
         .on("touchstart", entered)
         .on("touchend", left);
     } else {
       series
-        .on("mousemove", moved)
+        .on("mousemove", (event: any) => moved(event))
         .on("mouseenter", entered)
         .on("mouseleave", left);
     }
@@ -273,11 +273,11 @@ export class Linechart {
       dot.attr("display", "none");
     }
 
-    function moved(this: any) {
+    function moved(event: any) {
       event.preventDefault();
-      const ms = mouse(this);
-      const xm = self._scaleX.invert(ms[0]);
-      const ym = self._scaleY.invert(ms[1]);
+      const [x, y] = pointer(event);
+      const xm = self._scaleX.invert(x);
+      const ym = self._scaleY.invert(y);
       const xvalues = path.datum().values.map((d: any) => d[0]);
       const i1 = bisectLeft(xvalues, xm, 1);
       const i0 = i1 - 1;
@@ -306,7 +306,7 @@ export class Linechart {
             .attr("class", "linechart")
             .attr("d", (d: any) => this._line(d.values))
             .attr("stroke", (d: any) => d.color)
-            .on("click", () => this._lineClickHandler(event.target));
+            .on("click", (event: any) => this._lineClickHandler(event, event.target));
           series.append("title").text((d: any) => `${d.label}`);
         },
         (update: any) => {
@@ -321,7 +321,7 @@ export class Linechart {
     return this;
   }
 
-  private _lineClickHandler(el: Element): void {
+  private _lineClickHandler(event: any, el: Element): void {
     event.stopPropagation();
     this.clearSelection();
     window.dispatchEvent(new CustomEvent("line-selected", { detail: el }));

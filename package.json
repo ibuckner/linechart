@@ -32,14 +32,14 @@
   },
   "homepage": "https://github.com/ibuckner/linechart#readme",
   "dependencies": {
-    "@buckneri/spline": "^0.7.1",
-    "d3-array": "^2.5.1",
-    "d3-axis": "^1.0.12",
-    "d3-scale": "^3.2.1",
-    "d3-scale-chromatic": "^1.5.0",
-    "d3-selection": "^1.4.2",
+    "@buckneri/spline": "^0.7.2",
+    "d3-array": "^2.6.0",
+    "d3-axis": "^2.0.0",
+    "d3-scale": "^3.2.2",
+    "d3-scale-chromatic": "^2.0.0",
+    "d3-selection": "^2.0.0",
     "d3-shape": "^2.0.0",
-    "d3-transition": "^1.3.2"
+    "d3-transition": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "15.0.0",
@@ -56,16 +56,16 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsdoc": "30.2.4",
     "http-server": "^0.12.3",
-    "jest": "^26.4.1",
+    "jest": "^26.4.2",
     "jsdoc": "3.6.5",
     "npm-run-all": "^4.1.5",
     "postcss-cli": "^7.1.1",
     "postcss-sorting": "^5.0.1",
-    "rollup": "2.26.4",
+    "rollup": "2.26.5",
     "rollup-plugin-typescript2": "^0.27.2",
     "sass": "^1.26.10",
     "stylelint": "^13.6.1",
     "ts-jest": "^26.2.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.2"
   }
 }
