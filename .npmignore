@@ -10,6 +10,7 @@
 postcss.config.js
 build
 node_modules
+pnpm-lock.yaml
 rollup.config.js
 src
 docs
