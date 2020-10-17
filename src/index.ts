@@ -230,9 +230,11 @@ export class Linechart extends Basechart {
       const i0 = i1 - 1;
       const i = xm - xvalues[i0] > xvalues[i1] - xm ? i1 : i0;
       const s = least(self._data.series, (d: any) => Math.abs(d.values[i][1] - ym));
-      const dt = self._isDate(xvalues[i]) ? new Date(xvalues[i]) : xvalues[i] ;
-      dot.attr("transform", `translate(${self.scale.x(dt)},${self.scale.y(s.values[i][1])})`);
-      dot.select("text").text(s.label);
+      if (s) {
+        const dt = self._isDate(xvalues[i]) ? new Date(xvalues[i]) : xvalues[i] ;
+        dot.attr("transform", `translate(${self.scale.x(dt)},${self.scale.y(s.values[i][1])})`);
+        dot.select("text").text(s.label);
+      }
     }
 
     return this;
